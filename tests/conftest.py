@@ -39,3 +39,4 @@ def set_env(monkeypatch):
     monkeypatch.setenv("MAVEN_PROJECT_PATH", "/tmp/maven-test")
     monkeypatch.setenv("PLAYWRIGHT_PROJECT_PATH", "/tmp/playwright-test")
     monkeypatch.setenv("APPIUM_PROJECT_PATH", "/tmp/appium-test")
+    monkeypatch.setenv("APPIUM_SERVER_URL", "http://localhost:4723")
