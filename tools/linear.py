@@ -31,7 +31,10 @@ def fetch_ticket(ticket_id: str) -> dict:
         json={"query": query, "variables": {"id": ticket_id}}
     )
     resp.raise_for_status()
-    issue = resp.json()["data"]["issue"]
+    data = resp.json()
+    if not data.get("data") or not data["data"].get("issue"):
+        raise ValueError(f"Linear API returned no issue for ticket_id={ticket_id}")
+    issue = data["data"]["issue"]
     return {
         "id": issue["id"],
         "title": issue["title"],
@@ -65,7 +68,10 @@ def create_subtask(parent_id: str, title: str, description: str) -> str:
         }}
     )
     resp.raise_for_status()
-    return resp.json()["data"]["issueCreate"]["issue"]["id"]
+    data = resp.json()
+    if not data.get("data") or not data["data"].get("issueCreate"):
+        raise ValueError("Linear API failed to create subtask")
+    return data["data"]["issueCreate"]["issue"]["id"]
 
 
 def update_ticket_status(ticket_id: str, state_name: str) -> None:

@@ -32,7 +32,10 @@ def fetch_doc(doc_url: str) -> dict:
         json={"id": doc_id}
     )
     resp.raise_for_status()
-    doc = resp.json()["data"]["document"]
+    data = resp.json()
+    if not data.get("data") or not data["data"].get("document"):
+        raise ValueError(f"Outline API returned no document for url={doc_url}")
+    doc = data["data"]["document"]
     return {
         "id": doc["id"],
         "title": doc["title"],
