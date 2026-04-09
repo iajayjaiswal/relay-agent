@@ -1,6 +1,8 @@
-# STLC Orchestrator Agent
+# Relay
 
 A 15-agent system that automates the full Software Testing Life Cycle — from Linear ticket to GitHub PR, Allure report, and team notifications.
+
+Agents pass work to each other like a relay race: requirements → test plan → test cases → code → execution → closure.
 
 ## What It Does
 
@@ -83,7 +85,7 @@ python main.py
 It will prompt you for:
 
 ```
-🚀 STLC Orchestrator
+🚀 Relay — STLC Multi-Agent Pipeline
 ────────────────────────────────────────
 Linear ticket ID (e.g. QA-123): QA-123
 Outline doc URL: https://your-outline.com/doc/your-spec

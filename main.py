@@ -1,30 +1,38 @@
 # main.py
-import argparse
+import sys
 from dotenv import load_dotenv
 from orchestrator import run_pipeline
 
 load_dotenv()
 
 
+def prompt(label, default=None):
+    suffix = f" [{default}]" if default else ""
+    value = input(f"{label}{suffix}: ").strip()
+    return value or default
+
+
 def main():
-    parser = argparse.ArgumentParser(description="STLC Orchestrator Agent")
-    parser.add_argument("--ticket", required=True, help="Linear ticket ID (e.g. QA-123)")
-    parser.add_argument("--outline-url", required=True, help="Outline document URL")
-    parser.add_argument("--feature", required=True, help="Feature name (e.g. 'OCR Cheque')")
-    parser.add_argument(
-        "--tech-stack",
-        default="REST Assured + Playwright + Appium",
-        help="Test tech stack"
-    )
-    parser.add_argument("--output-dir", default="./stlc_output", help="Output directory")
-    args = parser.parse_args()
+    print("🚀 Relay — STLC Multi-Agent Pipeline")
+    print("─" * 40)
+    ticket = prompt("Linear ticket ID (e.g. QA-123)")
+    outline_url = prompt("Outline doc URL")
+    feature = prompt("Feature name (e.g. OCR Cheque)")
+    tech_stack = prompt("Tech stack", "REST Assured + Playwright + Appium")
+    output_dir = prompt("Output dir", "./stlc_output")
+
+    if not ticket or not outline_url or not feature:
+        print("❌ Ticket, Outline URL, and Feature are required.")
+        sys.exit(1)
+
+    print(f"\n▶ Starting pipeline for [{ticket}] — {feature}\n")
 
     state = run_pipeline(
-        linear_ticket_id=args.ticket,
-        outline_doc_url=args.outline_url,
-        feature_name=args.feature,
-        tech_stack=args.tech_stack,
-        output_dir=args.output_dir,
+        linear_ticket_id=ticket,
+        outline_doc_url=outline_url,
+        feature_name=feature,
+        tech_stack=tech_stack,
+        output_dir=output_dir,
     )
 
     print(f"\n✅ Done. PR: {state.pr_url}")
