@@ -16,6 +16,9 @@ class PipelineState:
     test_plan: str = ""
     linear_subtask_ids: list = field(default_factory=list)
 
+    # Stage 3 inputs (locator extraction)
+    locator_map: str = ""
+
     # Stage 3 outputs
     test_cases: str = ""
     test_cases_review: str = ""

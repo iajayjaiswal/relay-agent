@@ -30,12 +30,15 @@ def write_test_code(
     client: anthropic.Anthropic,
     test_cases: str,
     tech_stack: str,
-    feedback: str = ""
+    feedback: str = "",
+    locator_map: str = ""
 ) -> str:
     """Generate automation code from test cases. Include feedback if reworking."""
     content = test_cases
     if feedback:
         content = f"FEEDBACK TO ADDRESS:\n{feedback}\n\nTEST CASES:\n{test_cases}"
+
+    locator_section = f"Appium Locator Map (use these exact locators in your Appium code):\n{locator_map}" if locator_map else ""
 
     response = client.messages.create(
         model="claude-sonnet-4-6",
@@ -43,7 +46,7 @@ def write_test_code(
         system=CODE_WRITER_SYSTEM,
         messages=[{
             "role": "user",
-            "content": f"Tech Stack: {tech_stack}\n\nGenerate automation code for:\n\n{content}"
+            "content": f"Tech Stack: {tech_stack}\n\nGenerate automation code for:\n\n{content}\n\n{locator_section}"
         }]
     )
     return response.content[0].text

@@ -87,6 +87,20 @@ def build_tools() -> list[dict]:
             "input_schema": {"type": "object", "properties": {}, "required": []}
         },
         {
+            "name": "extract_appium_locators",
+            "description": "Extracts UI element locators from the connected Android device via adb and filters them for the feature under test. Call this before write_test_code when testing mobile features.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "output_path": {
+                        "type": "string",
+                        "description": "Path to save the UI dump XML. Defaults to /tmp/ui_dump.xml.",
+                    }
+                },
+                "required": [],
+            },
+        },
+        {
             "name": "write_test_code",
             "description": "Write automation code from test cases.",
             "input_schema": {
@@ -189,10 +203,19 @@ def execute_tool(client: anthropic.Anthropic, tool_name: str, tool_input: dict, 
         )
         return state.test_cases_review
 
+    elif tool_name == "extract_appium_locators":
+        import tools.appium_locators as appium_locators
+        from agents.locator_extractor import extract_relevant_locators
+        output_path = tool_input.get("output_path", "/tmp/ui_dump.xml")
+        raw_locators = appium_locators.extract_locators(output_path)
+        locator_map = extract_relevant_locators(client, raw_locators, state.analyzed_requirements)
+        state.locator_map = locator_map
+        return f"Locator map extracted:\n{locator_map}"
+
     elif tool_name == "write_test_code":
         feedback = tool_input.get("feedback", "")
         state.test_code = code_agent.write_test_code(
-            client, state.test_cases, state.tech_stack, feedback
+            client, state.test_cases, state.tech_stack, feedback, state.locator_map
         )
         return state.test_code
 
